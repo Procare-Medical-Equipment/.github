@@ -35,3 +35,8 @@ If you have a repository under your personal GitHub account that should live und
 The forked copy will appear at `github.com/Procare-Medical-Equipment/<repo-name>`.
 
 If the **Procare-Medical-Equipment** option does not appear in the Owner dropdown, you are not yet a member of the org — ask an admin to add you.
+
+---
+
+## Commit Rules
+For the time being, do not commit to anyone else's work. Only push changes to repositories or branches that are your own.
