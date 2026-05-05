@@ -1,6 +1,26 @@
 # Procare Medical Equipment
 
-This organization hosts the code our team works on together.
+This organization hosts the code our team works on together. Use the index below to find the right repo.
+
+## Tools
+
+Internal utilities, scripts, and developer tooling.
+
+- n8n Debug Toolkit (https://github.com/Procare-Medical-Equipment/n8n-Debug-Toolkit)
+
+## Apps
+
+Customer-facing or internal applications.
+
+- Procare Staff Dashboard (https://github.com/Procare-Medical-Equipment/procare-staff-dashboard)
+
+## Agents
+
+Automation and AI agents.
+
+- 
+
+---
 
 ## Forking your personal repo into the org
 
