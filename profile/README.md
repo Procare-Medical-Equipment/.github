@@ -13,6 +13,7 @@ Internal utilities, scripts, and developer tooling.
 Customer-facing or internal applications.
 
 - Procare Staff Dashboard (https://github.com/Procare-Medical-Equipment/procare-staff-dashboard)
+- Procare Statistic Dashboard (https://github.com/Procare-Medical-Equipment/procare-dashboard)
 
 ## Agents
 
