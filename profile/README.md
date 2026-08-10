@@ -24,22 +24,13 @@ Automation and AI agents.
 
 ---
 
-## Forking your personal repo into the org
+## Contributing
 
-If you have a repository under your personal GitHub account that should live under Procare Medical Equipment, fork it into the org:
+How you push changes depends on the kind of repo:
 
-1. Sign in to GitHub and open your repository (`github.com/<your-username>/<repo-name>`).
-2. Click the **Fork** button in the top-right of the repo page.
-3. On the **Create a new fork** page, click the **Owner** dropdown and select **Procare-Medical-Equipment**.
-4. Leave the repository name as-is (or change it if needed).
-5. Click **Create fork**.
+- **Web apps** (e.g. the Staff Dashboard) — push your work to the app's **`main`** branch. `main` is the **staging** environment and deploys there automatically. Promoting to **production** is a **pull request into the `production` branch**, which requires review before it merges.
+- **Everything else (non-web-app repos)** — **fork the repo** to your personal account and open a **pull request** back into the org repo.
 
-The forked copy will appear at `github.com/Procare-Medical-Equipment/<repo-name>`.
+Either way, production is reached only through a reviewed PR — never a direct push.
 
-If the **Procare-Medical-Equipment** option does not appear in the Owner dropdown, you are not yet a member of the org — ask an admin to add you.
-
----
-
-## Commit Rules
-
-For the time being, do not commit to anyone else's work. Only push changes to repositories or branches that are your own.
+If you can't push, or **Procare-Medical-Equipment** doesn't appear as a fork target, you're not a member of the org yet — ask an admin to add you.
