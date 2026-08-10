@@ -13,7 +13,6 @@ Internal utilities, scripts, and developer tooling.
 Customer-facing or internal applications.
 
 - [Procare Staff Dashboard](https://github.com/Procare-Medical-Equipment/procare-staff-dashboard) — internal staff operations dashboard.
-- [COMET Reseller Registration](https://github.com/Procare-Medical-Equipment/comet-reseller-registration) — reseller registration app.
 - [Website 2026](https://github.com/Procare-Medical-Equipment/website-2026) — company website (in progress).
 
 ## Agents
