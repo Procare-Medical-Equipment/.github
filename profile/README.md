@@ -6,19 +6,21 @@ This organization hosts the code our team works on together. Use the index below
 
 Internal utilities, scripts, and developer tooling.
 
-- n8n Debug Toolkit (https://github.com/Procare-Medical-Equipment/n8n-Debug-Toolkit)
+- [n8n Debug Toolkit](https://github.com/Procare-Medical-Equipment/n8n-Debug-Toolkit) — debug n8n workflows through a Claude interface + CLI.
 
 ## Apps
 
 Customer-facing or internal applications.
 
-- Procare Staff Dashboard ()
+- [Procare Staff Dashboard](https://github.com/Procare-Medical-Equipment/procare-staff-dashboard) — internal staff operations dashboard.
+- [COMET Reseller Registration](https://github.com/Procare-Medical-Equipment/comet-reseller-registration) — reseller registration app.
+- [Website 2026](https://github.com/Procare-Medical-Equipment/website-2026) — company website (in progress).
 
 ## Agents
 
 Automation and AI agents.
 
-- 
+- [ProCare AI Agent](https://github.com/Procare-Medical-Equipment/ProCare-AI-Agent-Repo) — components and workflows for building and versioning ProCare's AI agents.
 
 ---
 
@@ -39,4 +41,5 @@ If the **Procare-Medical-Equipment** option does not appear in the Owner dropdow
 ---
 
 ## Commit Rules
+
 For the time being, do not commit to anyone else's work. Only push changes to repositories or branches that are your own.
