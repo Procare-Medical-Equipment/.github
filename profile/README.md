@@ -19,6 +19,7 @@ How code lands in this org. The rules are enforced by GitHub; when something is 
 
 - Title: `<type>(<scope>)?: <subject>`, type one of `feat` `fix` `chore` `docs` `refactor` `test` `ci` `perf` `build` `revert` `promote` `hotfix` `release`. The title becomes the squash commit.
 - The check `pr-checks / checks` must pass: naming, no secret files, lint, tests. Resolve every review thread, then squash-merge.
+- Quick change to staging: `gh pr create --fill && gh pr merge --auto --squash`. It lands by itself when the check is green.
 
 ## Linting
 
