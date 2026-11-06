@@ -6,7 +6,7 @@ How code lands in this org. The rules are enforced by GitHub; when something is 
 
 - Name: `<pc|uq>-<type>-<dept>-<name>`. `pc` = ProCare-owned, `uq` = contract work for a client. Type is one of `app` `api` `connector` `automation` `tool` `template` `docs`. Dept is one word. All lowercase.
 - Create it, push `main`. Within 30 minutes an onboarding PR adds the standard files; merge it. From then on `main` is PR-only.
-- Every repo carries `project.yaml` at the root; its `name` equals the repo name.
+- Description in the About field. Lifecycle, platforms and data sensitivity in Settings → Custom properties.
 - New web apps and connectors start from the `pc-template-*` repos ("Use this template").
 
 ## Branches
@@ -18,7 +18,7 @@ How code lands in this org. The rules are enforced by GitHub; when something is 
 ## Pull requests
 
 - Title: `<type>(<scope>)?: <subject>`, type one of `feat` `fix` `chore` `docs` `refactor` `test` `ci` `perf` `build` `revert` `promote` `hotfix` `release`. The title becomes the squash commit.
-- The check `pr-checks / checks` must pass: naming, `project.yaml`, no secret files, lint, tests. Resolve every review thread, then squash-merge.
+- The check `pr-checks / checks` must pass: naming, no secret files, lint, tests. Resolve every review thread, then squash-merge.
 
 ## Linting
 
