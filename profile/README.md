@@ -26,6 +26,12 @@ How code lands in this org. The rules are enforced by GitHub; when something is 
 - Every JS/TS repo has a `lint` script and it runs in CI. Python repos run `ruff`.
 - Inherited findings are temporarily downgraded in a dated block; on the date in that block they become errors again.
 
+## Automation workflows (n8n, Zapier, Make)
+
+- Name every flow `CCC-NN-NN-SSP [Verb Object]`: 3-letter project code, major and minor version, 2-digit step, platform letter (`N` n8n, `Z` Zapier, `M` Make, `G` GitHub Actions), then a bracketed label. Example: `TRD-01-00-03N [Send Daily Reminder]`.
+- The project code is the repo's `Project-Code` custom property; one code per repo, picked once. The platform letter is the system that hosts the flow.
+- Bumping the version renames every flow of the project at once; that rename is the release.
+
 ## Tokens and keys
 
 - Name every token or key at the provider `<repo>--<env>--<client>-<access>[-<area>]`. Example: `pc-automation-ops-jessie-ivr--prod--n8n-rw-ai-automations`.
