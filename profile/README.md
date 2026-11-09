@@ -2,6 +2,25 @@
 
 How code lands in this org. The rules are enforced by GitHub; when something is rejected, the error tells you which rule.
 
+## Naming dictionary
+
+Every name in the org follows one of these. Details in the sections below.
+
+| Thing | Format | Example |
+|---|---|---|
+| Repo | `<pc\|uq>-<type>-<dept>-<name>` | `pc-automation-ops-jessie-ivr` |
+| Branch | `<type>/<slug>` | `feat/add-farewell` |
+| PR title, squash commit | `<type>(<scope>)?: <subject>` | `fix(billing): round totals` |
+| Promote PR | `promote: <what>` | `promote: add farewell` |
+| Release tag | `v<major>.<minor>.<patch>` | `v1.4.0` |
+| Automation workflow | `CCC-NN-NN-SSP [Verb Object]` | `TRD-01-00-03N [Send Daily Reminder]` |
+| Project code | 3 uppercase letters, repo property `Project-Code` | `TRD` |
+| Token or key at the provider | `<repo>--<env>--<client>-<access>[-<area>]` | `pc-automation-ops-jessie-ivr--prod--n8n-rw-ai-automations` |
+| Env var in the repo | `<SERVICE>_<KIND>` | `AIRTABLE_API_KEY` |
+| Lint-debt block | dated comment block in the lint config | `LINT DEBT — DEADLINE 2026-11-30` |
+
+Vocabularies: `type` (repo) is `app` `api` `connector` `automation` `tool` `template` `docs`. `type` (branch, PR) is `feat` `fix` `chore` `docs` `refactor` `test` `ci` `perf` `build` `revert` `promote` `hotfix` `release`. `env` is `prod` `staging` `ci` `local-<user>`. `access` is `ro` `rw` `deploy` `admin`. Platform letter is `N` n8n, `Z` Zapier, `M` Make, `G` GitHub Actions. Everything lowercase except project codes, platform letters and env var names.
+
 ## Repos
 
 - Name: `<pc|uq>-<type>-<dept>-<name>`. `pc` = ProCare-owned, `uq` = contract work for a client. Type is one of `app` `api` `connector` `automation` `tool` `template` `docs`. Dept is one word. All lowercase.
