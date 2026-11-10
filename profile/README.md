@@ -41,7 +41,7 @@ Vocabularies: `type` (repo) is `app` `api` `connector` `automation` `tool` `temp
 
 - Title: `<type>(<scope>)?: <subject>`, type one of `feat` `fix` `chore` `docs` `refactor` `test` `ci` `perf` `build` `revert` `promote` `hotfix` `release`. The title becomes the squash commit.
 - The check `pr-checks / checks` must pass: naming, no secret files, lint, tests. Resolve every review thread, then squash-merge.
-- `main` needs only the check. `production` also needs a review from the `admin` team, so every release has a second pair of eyes.
+- `main` needs only the check. `production` also needs a review from the `admin` team, so every release has a second pair of eyes. A repo an org owner has marked `Solo-Release` skips that review; today that is only the staff dashboard.
 - Quick change to staging: `gh pr create --fill && gh pr merge --auto --squash`. It lands by itself when the check is green.
 
 ## Issues and boards
