@@ -10,6 +10,9 @@ Every name in the org follows one of these. Details in the sections below.
 |---|---|---|
 | Repo | `<pc\|uq>-<type>-<dept>-<name>` | `pc-automation-ops-jessie-ivr` |
 | Branch | `<type>/<slug>` | `feat/add-farewell` |
+| Branch for an issue | `<type>/<issue#>-<slug>` | `fix/12-round-totals` |
+| Issue title | plain imperative sentence, no prefix | `Round invoice totals to cents` |
+| Board | the repo's name; the overview is `ProCare Work` | `pc-automation-finance-ar-agent` |
 | PR title, squash commit | `<type>(<scope>)?: <subject>` | `fix(billing): round totals` |
 | Promote PR | `promote: <what>` | `promote: add farewell` |
 | Release tag | `v<major>.<minor>.<patch>` | `v1.4.0` |
@@ -19,7 +22,7 @@ Every name in the org follows one of these. Details in the sections below.
 | Env var in the repo | `<SERVICE>_<KIND>` | `AIRTABLE_API_KEY` |
 | Lint-debt block | dated comment block in the lint config | `LINT DEBT — DEADLINE 2026-11-30` |
 
-Vocabularies: `type` (repo) is `app` `api` `connector` `automation` `tool` `template` `docs`. `type` (branch, PR) is `feat` `fix` `chore` `docs` `refactor` `test` `ci` `perf` `build` `revert` `promote` `hotfix` `release`. `env` is `prod` `staging` `ci` `local-<user>`. `access` is `ro` `rw` `deploy` `admin`. Platform letter is `N` n8n, `Z` Zapier, `M` Make, `G` GitHub Actions. Everything lowercase except project codes, platform letters and env var names.
+Vocabularies: `type` (repo) is `app` `api` `connector` `automation` `tool` `template` `docs`. `type` (branch, PR) is `feat` `fix` `chore` `docs` `refactor` `test` `ci` `perf` `build` `revert` `promote` `hotfix` `release`. `env` is `prod` `staging` `ci` `local-<user>`. `access` is `ro` `rw` `deploy` `admin`. Issue type is `Bug` `Feature` `Task` `Ask`. Priority is `Urgent` `High` `Medium` `Low`. Status is `Backlog` `Ready` `In progress` `Waiting` `In review` `Done`. Platform letter is `N` n8n, `Z` Zapier, `M` Make, `G` GitHub Actions. Everything lowercase except project codes, platform letters and env var names.
 
 ## Repos
 
@@ -39,6 +42,16 @@ Vocabularies: `type` (repo) is `app` `api` `connector` `automation` `tool` `temp
 - Title: `<type>(<scope>)?: <subject>`, type one of `feat` `fix` `chore` `docs` `refactor` `test` `ci` `perf` `build` `revert` `promote` `hotfix` `release`. The title becomes the squash commit.
 - The check `pr-checks / checks` must pass: naming, no secret files, lint, tests. Resolve every review thread, then squash-merge.
 - Quick change to staging: `gh pr create --fill && gh pr merge --auto --squash`. It lands by itself when the check is green.
+
+## Issues and boards
+
+- Work is an issue in the repo it changes. Pick the form: `Bug` (works wrong), `Feature` (something new), `Task` (everything else), `Ask` (we are waiting on someone outside the repo team). The form sets the issue type; there are no type labels.
+- Title is a plain imperative sentence. One assignee, the person doing it. Unassigned means up for grabs.
+- On the issue, the same everywhere: `Priority` is `Urgent` (production broken or a dated commitment at risk; other work stops), `High` (this cycle), `Medium` (next), `Low` (someday). `Target date` only when there is a real deadline. `Blocked by` links an issue to the `Ask` it waits on.
+- Each repo has a board named exactly like the repo. `Status`: `Backlog` (recorded), `Ready` (agreed, anyone can start), `In progress` (assigned, branch exists), `Waiting` (blocked on an `Ask`), `In review` (PR open), `Done` (merged to `main`, which is staging). A team may add its own fields to its board; the standard Status options stay.
+- The board **ProCare Work** shows every issue from every repo for admins. It reads only what is on the issue, so nothing needs syncing.
+- Issues reach both boards within 30 minutes. Branch for an issue is `<type>/<issue#>-<slug>`; put `Closes #<n>` in the PR and the merge closes the issue and moves it to `Done`.
+- Backlogs, to-do files and decision decks do not live in the repo. They are issues.
 
 ## Linting
 

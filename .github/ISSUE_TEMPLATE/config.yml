@@ -1,0 +1,2 @@
+# Org-wide default issue forms. Apply to every repo that has no .github/ISSUE_TEMPLATE of its own.
+blank_issues_enabled: false

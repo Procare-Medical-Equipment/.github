@@ -1,0 +1,16 @@
+name: Feature
+description: Something new the project should do.
+type: Feature
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: What someone can do once this exists, and who that someone is.
+    validations: { required: true }
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: The checks that prove it works. One per line.
+    validations: { required: true }

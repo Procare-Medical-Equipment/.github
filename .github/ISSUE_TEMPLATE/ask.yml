@@ -1,0 +1,21 @@
+name: Ask
+description: We need an answer, a decision or an action from someone outside the repo team.
+type: Ask
+body:
+  - type: input
+    id: who
+    attributes:
+      label: Who we are waiting on
+      description: Person, team or vendor.
+    validations: { required: true }
+  - type: textarea
+    id: ask
+    attributes:
+      label: The ask
+      description: The exact question or action, written so it can be forwarded as is.
+    validations: { required: true }
+  - type: textarea
+    id: blocks
+    attributes:
+      label: What it blocks
+      description: Issue numbers or a sentence. Leave empty if nothing is blocked yet.

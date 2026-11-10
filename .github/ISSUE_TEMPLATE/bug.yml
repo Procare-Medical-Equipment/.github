@@ -1,0 +1,20 @@
+name: Bug
+description: Something works wrong.
+type: Bug
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens
+      description: What you did, what you saw. Paste the error.
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should happen
+    validations: { required: true }
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: Environment (prod, staging, local) and version or commit.

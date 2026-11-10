@@ -1,0 +1,14 @@
+name: Task
+description: Work that is neither a bug nor a feature. Cleanup, upgrade, config, docs.
+type: Task
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What
+    validations: { required: true }
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+    validations: { required: true }
