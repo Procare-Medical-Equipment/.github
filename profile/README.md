@@ -49,6 +49,7 @@ Vocabularies: `type` (repo) is `app` `api` `connector` `automation` `tool` `temp
 - Title is a plain imperative sentence. One assignee, the person doing it. Unassigned means up for grabs.
 - On the issue, the same everywhere: `Priority` is `Urgent` (production broken or a dated commitment at risk; other work stops), `High` (this cycle), `Medium` (next), `Low` (someday). `Target date` only when there is a real deadline. `Blocked by` links an issue to the `Ask` it waits on.
 - Each repo has a board named exactly like the repo. `Status`: `Backlog` (recorded), `Ready` (agreed, anyone can start), `In progress` (assigned, branch exists), `Waiting` (blocked on an `Ask`), `In review` (PR open), `Done` (merged to `main`, which is staging). A team may add its own fields to its board; the standard Status options stay.
+- A repo rated `HIPAA` in `Data-Sensitivity` gets two more fields on its board automatically: `PHI impact` (`None`, `Reads PHI`, `Stores or sends PHI`) and `Safeguard` (`None`, `Access control`, `Audit logging`, `Encryption`, `Transmission`). Set them on any issue whose change touches patient data.
 - The board **ProCare Work** shows every issue from every repo for admins. It reads only what is on the issue, so nothing needs syncing.
 - Issues reach both boards within 30 minutes. Branch for an issue is `<type>/<issue#>-<slug>`; put `Closes #<n>` in the PR and the merge closes the issue and moves it to `Done`.
 - Backlogs, to-do files and decision decks do not live in the repo. They are issues.
@@ -77,6 +78,7 @@ Vocabularies: `type` (repo) is `app` `api` `connector` `automation` `tool` `temp
 ## Never in a repo
 
 - Secrets or keys (`.env.example` holds names only). PHI. Pay or people data.
+- The same holds for issues, pull requests, board fields, screenshots and pasted logs: no patient names, phone numbers, dates of birth, account or record numbers, or call recordings. Describe the case and point to the record in its own system.
 - Binary documents (`.docx` `.xlsx` `.pptx` `.pdf`). Documents live in Notion or SharePoint; link them from `docs/`.
 
 Full detail for members: the `dev-keys` README.
