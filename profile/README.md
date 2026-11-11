@@ -58,6 +58,7 @@ Vocabularies: `type` (repo) is `app` `api` `connector` `automation` `tool` `temp
 ## Linting
 
 - Every JS/TS repo has a `lint` script and it runs in CI. Python repos run `ruff`.
+- The rules are shared: JS/TS repos extend the public `eslint-config` repo, three lines in `eslint.config.js`. New `app`, `api` and `connector` repos start with it; its README shows how.
 - Inherited findings are temporarily downgraded in a dated block; on the date in that block they become errors again.
 
 ## Automation workflows (n8n, Zapier, Make)
