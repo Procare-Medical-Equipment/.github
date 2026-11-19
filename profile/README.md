@@ -12,7 +12,7 @@ Every name in the org follows one of these. Details and examples are in the sect
 
 | Thing | Format | Example |
 |---|---|---|
-| Repo | `<pc\|uq>-<type>-<dept>-<name>` | `pc-automation-ops-jessie-ivr` |
+| Repo | `<pc\|uq\|t>-<type>-<dept>-<name>` | `pc-automation-ops-jessie-ivr` |
 | Branch | `<type>/<slug>` | `feat/add-farewell` |
 | Branch for an issue | `<type>/<issue#>-<slug>` | `fix/12-round-totals` |
 | Issue title | plain imperative sentence, no prefix | `Round invoice totals to cents` |
@@ -30,9 +30,9 @@ Everything is lowercase except project codes, platform letters and env var names
 
 ## Repos
 
-**Rule.** A repo is named `<pc|uq>-<type>-<dept>-<name>`.
+**Rule.** A repo is named `<pc|uq|t>-<type>-<dept>-<name>`.
 
-- `pc` = ProCare owns it. `uq` = contract work for a client.
+- `pc` = ProCare owns it. `uq` = contract work for a client. `t` = a template: a starting point for a codebase, tied to neither.
 - `type` is one of `app` `api` `connector` `automation` `tool` `template` `docs`.
 - `dept` is one word: `ops`, `finance`, `sales`, `it`, `marketing`.
 - `name` is lowercase words joined by hyphens.
@@ -43,6 +43,7 @@ Everything is lowercase except project codes, platform letters and env var names
 | `uq-api-sales-comet-reseller-registration` | `comet-api` | owner and dept missing |
 | `pc-docs-marketing-brand-assets` | `Procare-Assets` | not the format; uppercase |
 | `pc-tool-it-dashboard-engine` | `pc-tool-IT-dashboard-engine` | uppercase dept |
+| `t-template-it-web-app` | `template-web-app` | no owner prefix or dept |
 
 **Enforced: Checked.** A wrongly named repo still gets created, but every PR in it fails until it is renamed (Settings → General → Repository name).
 
