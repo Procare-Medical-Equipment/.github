@@ -1,10 +1,14 @@
 # Procare Medical Equipment
 
-How code lands in this org. The rules are enforced by GitHub; when something is rejected, the error tells you which rule.
+How code lands in this org. Every rule below says how it is enforced:
+
+- **Blocked**: GitHub refuses the action. You get an error naming the rule.
+- **Checked**: the PR check `pr-checks / checks` fails, and the PR cannot merge until it is fixed.
+- **Convention**: nothing stops you. Follow it anyway; a reviewer will send it back.
 
 ## Naming dictionary
 
-Every name in the org follows one of these. Details in the sections below.
+Every name in the org follows one of these. Details and examples are in the sections below.
 
 | Thing | Format | Example |
 |---|---|---|
@@ -22,65 +26,277 @@ Every name in the org follows one of these. Details in the sections below.
 | Env var in the repo | `<SERVICE>_<KIND>` | `AIRTABLE_API_KEY` |
 | Lint-debt block | dated comment block in the lint config | `LINT DEBT — DEADLINE 2026-11-30` |
 
-Vocabularies: `type` (repo) is `app` `api` `connector` `automation` `tool` `template` `docs`. `type` (branch, PR) is `feat` `fix` `chore` `docs` `refactor` `test` `ci` `perf` `build` `revert` `promote` `hotfix` `release`. `env` is `prod` `staging` `ci` `local-<user>`. `access` is `ro` `rw` `deploy` `admin`. Issue type is `Bug` `Feature` `Task` `Ask`. Priority is `Urgent` `High` `Medium` `Low`. Status is `Backlog` `Ready` `In progress` `Waiting` `In review` `Done`. Platform letter is `N` n8n, `Z` Zapier, `M` Make, `G` GitHub Actions. Everything lowercase except project codes, platform letters and env var names.
+Everything is lowercase except project codes, platform letters and env var names.
 
 ## Repos
 
-- Name: `<pc|uq>-<type>-<dept>-<name>`. `pc` = ProCare-owned, `uq` = contract work for a client. Type is one of `app` `api` `connector` `automation` `tool` `template` `docs`. Dept is one word. All lowercase.
-- Create it, push `main`. Within 30 minutes an onboarding PR adds the standard files; merge it. From then on `main` is PR-only.
-- Description in the About field. Lifecycle, platforms and data sensitivity in Settings → Custom properties.
-- New web apps and connectors start from the `pc-template-*` repos ("Use this template").
+**Rule.** A repo is named `<pc|uq>-<type>-<dept>-<name>`.
+
+- `pc` = ProCare owns it. `uq` = contract work for a client.
+- `type` is one of `app` `api` `connector` `automation` `tool` `template` `docs`.
+- `dept` is one word: `ops`, `finance`, `sales`, `it`, `marketing`.
+- `name` is lowercase words joined by hyphens.
+
+| Right | Wrong | Why it is wrong |
+|---|---|---|
+| `pc-app-ops-staff-portal` | `StaffPortal` | no owner, type or dept; uppercase |
+| `uq-api-sales-comet-reseller-registration` | `comet-api` | owner and dept missing |
+| `pc-docs-marketing-brand-assets` | `Procare-Assets` | not the format; uppercase |
+| `pc-tool-it-dashboard-engine` | `pc-tool-IT-dashboard-engine` | uppercase dept |
+
+**Enforced: Checked.** A wrongly named repo still gets created, but every PR in it fails until it is renamed (Settings → General → Repository name).
+
+**Creating one.** Name it, push `main`, and that is all:
+
+```bash
+gh repo create Procare-Medical-Equipment/pc-app-ops-staff-portal --private --source . --push
+```
+
+Within 30 minutes an onboarding PR titled `chore: adopt org PR flow` appears. It adds the check, CODEOWNERS and the PR template. Merge it. From that moment `main` only changes through pull requests. The repo also gets a board and has Issues switched on.
+
+**About the repo** lives on the repo, not in a file: the description in the About field; lifecycle, platforms, data sensitivity and project code in Settings → Custom properties.
+
+New web apps and connectors start from the `pc-template-*` repos ("Use this template").
 
 ## Branches
 
-- `main` is staging. `production` is the released version, promoted from `main` by a PR titled `promote: <what>` and tagged.
-- Work on a branch named `<type>/<slug>`, pushed to the org repo. No forks.
-- `main`, `production` and `staging` change only through a pull request. No direct pushes, no force-pushes.
+There are two long-lived branches, and they mean two different things.
+
+| Branch | What it is | What deploys from it |
+|---|---|---|
+| `main` | **Staging.** The newest merged work, being tested | The staging environment, if the project has one |
+| `production` | **The released version.** What staff and customers actually use | The live system, and nothing else deploys there |
+
+**Rule 1. Live systems deploy from `production` only.** A workflow that pushes to a live app, function, phone agent or database runs on `production`. A merge to `main` never changes what users see.
+
+```yaml
+# Right: the live deploy waits for a release
+on:
+  push:
+    branches: [production]
+
+# Wrong: every merge to main goes straight to users
+on:
+  push:
+    branches: [main]      # deploying the live app from here breaks the rule
+```
+
+**Enforced: Convention.** Nothing checks which branch a deploy runs from. A repo that has nothing live yet has only `main`; create `production` the day it first ships:
+
+```bash
+git push origin main:production
+```
+
+**Rule 2. `production` only moves by a promote PR.** Open a PR into `production` from `main`, or from a `promote/<slug>` branch cut from `main`, titled `promote: <what>`.
+
+```bash
+gh pr create --base production --head main --title "promote: round invoice totals"
+```
+
+**Enforced: Blocked.** `production` needs the green check and a review from the `admin` team. A repo an org owner has marked `Solo-Release` skips the review; today that is only the staff dashboard.
+
+**Rule 3. No direct pushes, force-pushes or deletion on `main` and `production`.**
+
+**Enforced: Blocked.** The push is rejected with the rule's name.
+
+**Rule 4. Work happens on a branch named `<type>/<slug>`, in the org repo.** `type` is one of `feat` `fix` `chore` `docs` `refactor` `test` `ci` `perf` `build` `revert` `promote` `hotfix` `release`. When the work is for an issue, put its number first in the slug.
+
+| Right | Wrong | Why it is wrong |
+|---|---|---|
+| `feat/add-farewell` | `add-farewell` | no type |
+| `fix/12-round-totals` | `tyler-test` | no type, says nothing |
+| `chore/drop-old-scripts` | `Feature/AddFarewell` | type is not one of the list |
+| `promote/va-round-10` | `patch-1` | no type, no meaning |
+
+**Enforced: Checked, at PR time only.** GitHub cannot stop a badly named branch from being pushed on our plan. The PR from it fails the check. Fix it by renaming and reopening:
+
+```bash
+git branch -m feat/add-farewell && git push -u origin feat/add-farewell
+```
+
+Branches named `claude/...` and `dependabot/...` are made by tools and are accepted.
+
+**Rule 5. No forks.** Clone the org repo and branch in it.
+
+**Enforced: Blocked.** Forking private repos is switched off. A PR from an old fork can never merge, because the check does not run on fork PRs.
 
 ## Pull requests
 
-- Title: `<type>(<scope>)?: <subject>`, type one of `feat` `fix` `chore` `docs` `refactor` `test` `ci` `perf` `build` `revert` `promote` `hotfix` `release`. The title becomes the squash commit.
-- The check `pr-checks / checks` must pass: naming, no secret files, lint, tests. Resolve every review thread, then squash-merge.
-- `main` needs only the check. `production` also needs a review from the `admin` team, so every release has a second pair of eyes. A repo an org owner has marked `Solo-Release` skips that review; today that is only the staff dashboard.
-- Quick change to staging: `gh pr create --fill && gh pr merge --auto --squash`. It lands by itself when the check is green.
+**Rule 1. The title is `<type>(<scope>)?: <subject>`.** Same types as branches. The title becomes the one commit on `main`.
+
+| Right | Wrong | Why it is wrong |
+|---|---|---|
+| `feat: add farewell` | `Add farewell` | no type |
+| `fix(billing): round totals` | `Fix: round totals` | type is capitalised |
+| `promote: VA round 10` | `feat - add farewell` | needs a colon and a space |
+| `chore: drop old scripts` | `chore/drop old scripts` | that is a branch name, not a title |
+
+**Enforced: Checked.** Edit the title and the check runs again by itself.
+
+**Rule 2. The check must pass.** It runs these, in order, and reports every failure at once:
+
+1. Naming: repo, branch, PR title.
+2. No secret-shaped files tracked: `.env`, `.env.*`, `.envrc`, `*.local`. Only `.env.example` is allowed.
+3. Lint: `npm run lint` when there is a `package.json`; `ruff check` when there are Python files.
+4. No lint-debt block past its deadline.
+5. .NET: the solution builds and its test projects pass.
+6. Tests: `npm test` or `pytest`, when the repo has them.
+
+**Enforced: Blocked** until it is green.
+
+**Rule 3. Who has to approve.**
+
+| Target | Needs |
+|---|---|
+| `main` | the green check. No review |
+| `production` | the green check and a review from the `admin` team |
+
+Every review thread must be resolved. Merge by squash; merge commits are switched off. **Enforced: Blocked.**
+
+**Rule 4. One pull request per issue.** Work until the issue is done, then open one PR for it. Do not open a string of small PRs against the same issue; each one costs a reviewer's time.
+
+**Enforced: Convention.**
+
+**A whole change, start to finish:**
+
+```bash
+git switch -c fix/12-round-totals
+# ...work, commit...
+git push -u origin HEAD
+gh pr create --title "fix: round invoice totals" --body "Closes #12" && gh pr merge --auto --squash
+```
+
+It lands on `main`, which is staging, when the check is green, and issue 12 closes. Releasing it is the promote PR in Branches, rule 2.
 
 ## Issues and boards
 
-- Work is an issue in the repo it changes. Pick the form: `Bug` (works wrong), `Feature` (something new), `Task` (everything else), `Ask` (we are waiting on someone outside the repo team). The form sets the issue type; there are no type labels.
-- Title is a plain imperative sentence. One assignee, the person doing it. Unassigned means up for grabs.
-- On the issue, the same everywhere: `Priority` is `Urgent` (production broken or a dated commitment at risk; other work stops), `High` (this cycle), `Medium` (next), `Low` (someday). `Target date` only when there is a real deadline. `Blocked by` links an issue to the `Ask` it waits on.
-- Each repo has a board named exactly like the repo. `Status`: `Backlog` (recorded), `Ready` (agreed, anyone can start), `In progress` (assigned, branch exists), `Waiting` (blocked on an `Ask`), `In review` (PR open), `Done` (merged to `main`, which is staging). A team may add its own fields to its board; the standard Status options stay.
-- A repo rated `HIPAA` in `Data-Sensitivity` gets two more fields on its board automatically: `PHI impact` (`None`, `Reads PHI`, `Stores or sends PHI`) and `Safeguard` (`None`, `Access control`, `Audit logging`, `Encryption`, `Transmission`). Set them on any issue whose change touches patient data.
-- The board **ProCare Work** shows every issue from every repo for admins. It reads only what is on the issue, so nothing needs syncing.
-- Issues reach both boards within 30 minutes. Branch for an issue is `<type>/<issue#>-<slug>`; put `Closes #<n>` in the PR and the merge closes the issue and moves it to `Done`.
-- Backlogs, to-do files and decision decks do not live in the repo. They are issues.
+**Rule 1. Work is an issue in the repo it changes.** Pick the form; the form sets the type. There are no type labels.
+
+| Form | Use it when |
+|---|---|
+| `Bug` | something works wrong |
+| `Feature` | something new |
+| `Task` | everything else: cleanup, upgrade, config, docs |
+| `Ask` | we are waiting on an answer, decision or action from someone outside the repo team |
+
+**Rule 2. The title is a plain imperative sentence.**
+
+| Right | Wrong |
+|---|---|
+| `Round invoice totals to cents` | `bug: totals` |
+| `Clear the lint-debt block before the Nov 30 deadline` | `Lint` |
+
+One assignee, the person doing it. Unassigned means up for grabs.
+
+**Rule 3. Priority and dates live on the issue.**
+
+| Priority | Meaning |
+|---|---|
+| `Urgent` | production is broken or a dated commitment is at risk; other work stops |
+| `High` | this cycle |
+| `Medium` | next |
+| `Low` | someday |
+
+`Target date` only when there is a real deadline. `Blocked by` links an issue to the `Ask` it waits on.
+
+**Rule 4. Each repo has a board named exactly like the repo.** Its `Status`:
+
+| Status | Meaning |
+|---|---|
+| `Backlog` | recorded, not agreed to do |
+| `Ready` | agreed and specified; anyone can start |
+| `In progress` | assigned, branch exists |
+| `Waiting` | blocked on an `Ask` or an outside party |
+| `In review` | PR open |
+| `Done` | merged to `main`, which is staging |
+
+A team may add fields to its own board. The standard Status options stay. A repo rated `HIPAA` gets `PHI impact` and `Safeguard` automatically; set them on any issue whose change touches patient data. The board **ProCare Work** shows every issue from every repo, for admins.
+
+**Rule 5. Backlogs, to-do files and decision decks do not live in a repo.** They are issues.
+
+**Enforced: Convention** for all five. The forms, boards and fields are created for you; issues reach the boards within 30 minutes.
 
 ## Linting
 
-- Every JS/TS repo has a `lint` script and it runs in CI. Python repos run `ruff`.
-- The rules are shared: JS/TS repos extend the public `eslint-config` repo, three lines in `eslint.config.js`. New `app`, `api` and `connector` repos start with it; its README shows how.
-- Inherited findings are temporarily downgraded in a dated block; on the date in that block they become errors again.
+**Rule 1. Every JS/TS repo has a `lint` script that passes. Python repos pass `ruff check`.**
+
+```json
+"scripts": { "lint": "eslint . && tsc --noEmit" }
+```
+
+**Enforced: Checked.** A `package.json` with no `lint` script fails the check.
+
+**Rule 2. The rules are shared.** `app`, `api` and `connector` repos extend the public `eslint-config` repo:
+
+```js
+// eslint.config.js
+import procare from '@procare/eslint-config'
+export default [...procare]
+```
+
+**Enforced: Convention** for now.
+
+**Rule 3. Lint debt is a loan with a date.** A repo that inherits findings may turn rules down inside a block marked exactly like this:
+
+```js
+// LINT DEBT — TEMPORARY. DEADLINE 2026-11-30: this block is deleted on that date.
+rules: { '@typescript-eslint/no-explicit-any': 'warn' }
+```
+
+**Enforced: Checked** for the date: the day after it, every PR in that repo fails until the block is gone. Turning a rule off without a dated block is not allowed; that part is **Convention**.
 
 ## Automation workflows (n8n, Zapier, Make)
 
-- Name every flow `CCC-NN-NN-SSP [Verb Object]`: 3-letter project code, major and minor version, 2-digit step, platform letter (`N` n8n, `Z` Zapier, `M` Make, `G` GitHub Actions), then a bracketed label. Example: `TRD-01-00-03N [Send Daily Reminder]`.
-- The project code is the repo's `Project-Code` custom property; one code per repo, picked once. The platform letter is the system that hosts the flow.
-- Bumping the version renames every flow of the project at once; that rename is the release.
+**Rule. Every flow is named `CCC-NN-NN-SSP [Verb Object]`.**
+
+| Part | Meaning | Example |
+|---|---|---|
+| `CCC` | project code, the repo's `Project-Code` property | `TRD` |
+| `NN-NN` | major and minor version | `01-00` |
+| `SS` | step in the flow's lifecycle | `03` |
+| `P` | platform letter: `N` n8n, `Z` Zapier, `M` Make, `G` GitHub Actions | `N` |
+| `[Verb Object]` | what it does | `[Send Daily Reminder]` |
+
+| Right | Wrong | Why it is wrong |
+|---|---|---|
+| `TRD-01-00-03N [Send Daily Reminder]` | `Daily reminder v2` | no code, version, step or platform |
+| `PDE-01-00-05G [Build And Verify]` | `TRD-1-0-3N [Reminder]` | numbers not two digits; label is not verb and object |
+
+Bumping the version renames every flow of the project at once. That rename is the release.
+
+**Enforced: Convention.**
 
 ## Tokens and keys
 
-- Name every token or key at the provider `<repo>--<env>--<client>-<access>[-<area>]`. Example: `pc-automation-ops-jessie-ivr--prod--n8n-rw-ai-automations`.
-- `env` is where the value lives: `prod` (the `production` deployment, host config), `staging` (the `main` deployment, host config), `ci` (GitHub Actions secrets), `local-<user>` (one person's machine, never shared).
-- `client` is the system that holds and sends the token: `github` (Actions), `n8n`, `azure`, `claude`, `local` (a script on a machine). Not the provider you are creating it in.
-- `access` is one of `ro` (read), `rw` (read and write), `deploy` (push builds or infra), `admin` (manage the account; needs an org owner).
-- `area`, optional, is the slice of the provider the token can reach, as the provider names it, lowercase and hyphenated: an Airtable base, a SharePoint site, a Business Central company, a GHL location. Scope the token to that area when the provider allows it.
-- One token per repo per env per client. Never reuse one across repos or environments. Rotate it when its creator leaves.
-- In the repo it is an env var named `<SERVICE>_<KIND>` (`AIRTABLE_API_KEY`, `BC_CLIENT_SECRET`), listed by name only in `.env.example`.
+**Rule 1. A token is named at the provider `<repo>--<env>--<client>-<access>[-<area>]`.**
+
+| Part | Values | Meaning |
+|---|---|---|
+| `env` | `prod` `staging` `ci` `local-<user>` | where the value lives: the `production` deployment, the `main` deployment, GitHub Actions secrets, or one person's machine |
+| `client` | `github` `n8n` `azure` `claude` `local` | the system that holds and sends the token, not the provider you create it in |
+| `access` | `ro` `rw` `deploy` `admin` | read, read and write, push builds or infra, manage the account |
+| `area` | optional | the slice of the provider it can reach: an Airtable base, a SharePoint site, a Business Central company |
+
+| Right | Wrong | Why it is wrong |
+|---|---|---|
+| `pc-automation-ops-jessie-ivr--prod--n8n-rw-ai-automations` | `jessie token` | cannot be traced to a repo, environment or purpose |
+| `pc-app-ops-staff-portal--ci--github-deploy` | `pc-app-ops-staff-portal-prod` | no client or access; single hyphens |
+
+**Rule 2. One token per repo, per environment, per client.** Never reuse one across repos or environments. Rotate it when its creator leaves. `admin` access needs an org owner.
+
+**Rule 3. In the repo it is an env var named `<SERVICE>_<KIND>`**, listed by name only in `.env.example`: `AIRTABLE_API_KEY`, `BC_CLIENT_SECRET`.
+
+**Enforced: Convention** for the names. **Checked** for the files: a tracked `.env` fails the check.
 
 ## Never in a repo
 
-- Secrets or keys (`.env.example` holds names only). PHI. Pay or people data.
-- The same holds for issues, pull requests, board fields, screenshots and pasted logs: no patient names, phone numbers, dates of birth, account or record numbers, or call recordings. Describe the case and point to the record in its own system.
-- Binary documents (`.docx` `.xlsx` `.pptx` `.pdf`). Documents live in Notion or SharePoint; link them from `docs/`.
+| Never | Where it goes instead | Enforced |
+|---|---|---|
+| Secrets or keys | the host's config or Actions secrets; `.env.example` holds names only | Checked for secret-shaped files |
+| PHI: patient names, phone numbers, dates of birth, account or record numbers, call recordings | its own system of record | Convention |
+| Pay or people data | HR's system | Convention |
+| Binary documents: `.docx` `.xlsx` `.pptx` `.pdf` | Notion or SharePoint, linked from `docs/` | Convention |
+
+The PHI rule also covers issues, pull requests, board fields, screenshots and pasted logs. Describe the case and point to the record in its own system.
 
 Full detail for members: the `dev-keys` README.
