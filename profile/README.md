@@ -137,7 +137,7 @@ Branches named `claude/...` and `dependabot/...` are made by tools and are accep
 **Rule 2. The check must pass.** It runs these, in order, and reports every failure at once:
 
 1. Naming: repo, branch, PR title.
-2. No secret-shaped files tracked: `.env`, `.env.*`, `.envrc`, `*.local`. Only `.env.example` is allowed.
+2. No secret-shaped files tracked: `.env`, `.env.*`, `.envrc`, `*.local`, or a private key (`*.pem`, `*.key`, `*.p12`, `*.pfx`, `*.ppk`, `id_rsa` and the like). Only `.env.example` is allowed. A public certificate goes in a `.crt` or `.cer` file.
 3. Lint: `npm run lint` when there is a `package.json`; `ruff check` when there are Python files.
 4. No lint-debt block past its deadline.
 5. .NET: the solution builds and its test projects pass.
@@ -287,7 +287,7 @@ Bumping the version renames every flow of the project at once. That rename is th
 
 **Rule 3. In the repo it is an env var named `<SERVICE>_<KIND>`**, listed by name only in `.env.example`: `AIRTABLE_API_KEY`, `BC_CLIENT_SECRET`.
 
-**Enforced: Convention** for the names. **Checked** for the files: a tracked `.env` fails the check.
+**Enforced: Convention** for the names. **Checked** for the files: a tracked `.env` or private key fails the check.
 
 ## Never in a repo
 
