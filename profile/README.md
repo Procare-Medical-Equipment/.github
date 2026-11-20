@@ -20,13 +20,13 @@ Every name in the org follows one of these. Details and examples are in the sect
 | PR title, squash commit | `<type>(<scope>)?: <subject>` | `fix(billing): round totals` |
 | Promote PR | `promote: <what>` | `promote: add farewell` |
 | Release tag | `v<major>.<minor>.<patch>` | `v1.4.0` |
-| Automation workflow | `CCC-NN-NN-SSP [Verb Object]` | `TRD-01-00-03N [Send Daily Reminder]` |
-| Project code | 3 uppercase letters, repo property `Project-Code` | `TRD` |
+| GitHub Actions workflow | `<action>-<trigger>-<service> [Verb Object]` | `deploy-auto-azure [Deploy Function]` |
+| Uptiq flow | `<repo>--<caller>-<service> [Verb Object]` | `pc-automation-ops-jessie-ivr--jessie-airtable [Log Call Summary]` |
 | Token or key at the provider | `<repo>--<env>--<client>-<access>[-<area>]` | `pc-automation-ops-jessie-ivr--prod--n8n-rw-ai-automations` |
 | Env var in the repo | `<SERVICE>_<KIND>` | `AIRTABLE_API_KEY` |
 | Lint-debt block | dated comment block in the lint config | `LINT DEBT — DEADLINE 2026-11-30` |
 
-Everything is lowercase except project codes, platform letters and env var names.
+Everything is lowercase except env var names and the plain name in brackets.
 
 ## Repos
 
@@ -55,7 +55,7 @@ gh repo create Procare-Medical-Equipment/pc-app-ops-staff-portal --private --sou
 
 Within 30 minutes an onboarding PR titled `chore: adopt org PR flow` appears. It adds the check, CODEOWNERS and the PR template. Merge it. From that moment `main` only changes through pull requests. The repo also gets a board and has Issues switched on.
 
-**About the repo** lives on the repo, not in a file: the description in the About field; lifecycle, platforms, data sensitivity and project code in Settings → Custom properties.
+**About the repo** lives on the repo, not in a file: the description in the About field; lifecycle, platforms and data sensitivity in Settings → Custom properties.
 
 New web apps and connectors start from the `pc-template-*` repos ("Use this template").
 
@@ -246,26 +246,39 @@ rules: { '@typescript-eslint/no-explicit-any': 'warn' }
 
 **Enforced: Checked** for the date: the day after it, every PR in that repo fails until the block is gone. Turning a rule off without a dated block is not allowed; that part is **Convention**.
 
-## Automation workflows (n8n, Zapier, Make)
+## Workflow names
 
-**Rule. Every flow is named `CCC-NN-NN-SSP [Verb Object]`.**
+**Rule 1. A GitHub Actions workflow is named `<action>-<trigger>-<service> [Verb Object]`.** That is the `name:` line of the file in `.github/workflows/`.
 
-| Part | Meaning | Example |
+| Part | Values | Meaning |
 |---|---|---|
-| `CCC` | project code, the repo's `Project-Code` property | `TRD` |
-| `NN-NN` | major and minor version | `01-00` |
-| `SS` | step in the flow's lifecycle | `03` |
-| `P` | platform letter: `N` n8n, `Z` Zapier, `M` Make, `G` GitHub Actions | `N` |
-| `[Verb Object]` | what it does | `[Send Daily Reminder]` |
+| `action` | `check` `test` `build` `deploy` `sync` `release` | the kind of work. `check` verifies and changes nothing; `sync` copies or reconciles state between systems |
+| `trigger` | `auto` `manual` `called` | `auto` starts by itself: a push, a pull request, a schedule. `manual` runs only when someone clicks **Run workflow**. `called` is a reusable workflow that another workflow runs. A workflow with both an automatic trigger and a Run button is `auto` |
+| `service` | `github` `azure` `uptiq` … | the outside system it acts on, one lowercase word. `github` when it touches nothing outside GitHub |
+| `[Verb Object]` | title case | what it does, in plain words |
+
+No repo name, project code or version number: the workflow lives in its repo, and git has its history.
 
 | Right | Wrong | Why it is wrong |
 |---|---|---|
-| `TRD-01-00-03N [Send Daily Reminder]` | `Daily reminder v2` | no code, version, step or platform |
-| `PDE-01-00-05G [Build And Verify]` | `TRD-1-0-3N [Reminder]` | numbers not two digits; label is not verb and object |
+| `deploy-auto-azure [Deploy Function]` | `JES-01-00-95G [Deploy Function]` | a project code and a version; git already has both |
+| `check-auto-github [Check Pull Request]` | `PR Checks` | no action, trigger or service |
+| `test-manual-github [Run Org Tests]` | `Test-Manual-GitHub [tests]` | the code is lowercase; the name is a verb and an object in title case |
 
-Bumping the version renames every flow of the project at once. That rename is the release.
+**Rule 2. An Uptiq flow is named `<repo>--<caller>-<service> [Verb Object]`.** A flow is not stored in a repo, so its name has to say where it belongs.
 
-**Enforced: Convention.**
+| Part | Meaning |
+|---|---|
+| `repo` | the repo that owns the flow |
+| `caller` | what starts the flow: the agent, form, webhook or schedule |
+| `service` | the system the flow sends data to |
+| `[Verb Object]` | what it does, in plain words |
+
+| Right | Wrong | Why it is wrong |
+|---|---|---|
+| `pc-automation-ops-jessie-ivr--jessie-airtable [Log Call Summary]` | `Call summary flow` | cannot be traced to a repo, a caller or a destination |
+
+**Enforced: Convention** for both.
 
 ## Tokens and keys
 
