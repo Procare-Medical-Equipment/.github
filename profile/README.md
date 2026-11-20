@@ -20,8 +20,7 @@ Every name in the org follows one of these. Details and examples are in the sect
 | PR title, squash commit | `<type>(<scope>)?: <subject>` | `fix(billing): round totals` |
 | Promote PR | `promote: <what>` | `promote: add farewell` |
 | Release tag | `v<major>.<minor>.<patch>` | `v1.4.0` |
-| GitHub Actions workflow | `<action>-<trigger>-<service> [Verb Object]` | `deploy-auto-azure [Deploy Function]` |
-| Uptiq flow | `<repo>--<caller>-<service> [Verb Object]` | `pc-automation-ops-jessie-ivr--jessie-airtable [Log Call Summary]` |
+| Workflow (GitHub Actions, Uptiq) | `<action>-<trigger>-<service> [Verb Object]` | `deploy-auto-azure [Deploy Function]` |
 | Token or key at the provider | `<repo>--<env>--<client>-<access>[-<area>]` | `pc-automation-ops-jessie-ivr--prod--n8n-rw-ai-automations` |
 | Env var in the repo | `<SERVICE>_<KIND>` | `AIRTABLE_API_KEY` |
 | Lint-debt block | dated comment block in the lint config | `LINT DEBT — DEADLINE 2026-11-30` |
@@ -248,37 +247,25 @@ rules: { '@typescript-eslint/no-explicit-any': 'warn' }
 
 ## Workflow names
 
-**Rule 1. A GitHub Actions workflow is named `<action>-<trigger>-<service> [Verb Object]`.** That is the `name:` line of the file in `.github/workflows/`.
+**Rule. A workflow is named `<action>-<trigger>-<service> [Verb Object]`.** This covers GitHub Actions workflows (the `name:` line of the file in `.github/workflows/`) and Uptiq flows (the flow's name in Uptiq).
 
 | Part | Values | Meaning |
 |---|---|---|
-| `action` | `check` `test` `build` `deploy` `sync` `release` | the kind of work. `check` verifies and changes nothing; `sync` copies or reconciles state between systems |
-| `trigger` | `auto` `manual` `called` | `auto` starts by itself: a push, a pull request, a schedule. `manual` runs only when someone clicks **Run workflow**. `called` is a reusable workflow that another workflow runs. A workflow with both an automatic trigger and a Run button is `auto` |
-| `service` | `github` `azure` `uptiq` … | the outside system it acts on, one lowercase word. `github` when it touches nothing outside GitHub |
+| `action` | `check` `test` `build` `deploy` `sync` `release` | the kind of work. `check` verifies and changes nothing; `sync` copies or sends data from one system to another |
+| `trigger` | `auto` `manual` `called` | `auto` starts by itself: a push, a pull request, a schedule, a form or tag in Uptiq. `manual` runs only when a person starts it. `called` is run by something else: a reusable workflow run by another workflow, an Uptiq flow run by an agent or another flow. A workflow with both an automatic trigger and a Run button is `auto` |
+| `service` | `github` `azure` `uptiq` … | the system it acts on or sends data to, one lowercase word. `github` when a GitHub workflow touches nothing outside GitHub |
 | `[Verb Object]` | title case | what it does, in plain words |
 
-No repo name, project code or version number: the workflow lives in its repo, and git has its history.
+No repo name, project code or version number in the name.
 
 | Right | Wrong | Why it is wrong |
 |---|---|---|
-| `deploy-auto-azure [Deploy Function]` | `JES-01-00-95G [Deploy Function]` | a project code and a version; git already has both |
+| `deploy-auto-azure [Deploy Function]` | `JES-01-00-95G [Deploy Function]` | a project code and a version |
 | `check-auto-github [Check Pull Request]` | `PR Checks` | no action, trigger or service |
+| `sync-called-azure [Post Call Details To Router]` | `Call end flow v2` | no action, trigger or service; a version |
 | `test-manual-github [Run Org Tests]` | `Test-Manual-GitHub [tests]` | the code is lowercase; the name is a verb and an object in title case |
 
-**Rule 2. An Uptiq flow is named `<repo>--<caller>-<service> [Verb Object]`.** A flow is not stored in a repo, so its name has to say where it belongs.
-
-| Part | Meaning |
-|---|---|
-| `repo` | the repo that owns the flow |
-| `caller` | what starts the flow: the agent, form, webhook or schedule |
-| `service` | the system the flow sends data to |
-| `[Verb Object]` | what it does, in plain words |
-
-| Right | Wrong | Why it is wrong |
-|---|---|---|
-| `pc-automation-ops-jessie-ivr--jessie-airtable [Log Call Summary]` | `Call summary flow` | cannot be traced to a repo, a caller or a destination |
-
-**Enforced: Convention** for both.
+**Enforced: Convention.**
 
 ## Tokens and keys
 
