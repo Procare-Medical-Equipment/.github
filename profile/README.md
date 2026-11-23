@@ -137,10 +137,11 @@ Branches named `claude/...` and `dependabot/...` are made by tools and are accep
 
 1. Naming: repo, branch, PR title.
 2. No secret-shaped files tracked: `.env`, `.env.*`, `.envrc`, `*.local`, or a private key (`*.pem`, `*.key`, `*.p12`, `*.pfx`, `*.ppk`, `id_rsa` and the like). Only `.env.example` is allowed. A public certificate goes in a `.crt` or `.cer` file.
-3. Lint: `npm run lint` when there is a `package.json`; `ruff check` when there are Python files.
-4. No lint-debt block past its deadline.
-5. .NET: the solution builds and its test projects pass.
-6. Tests: `npm test` or `pytest`, when the repo has them.
+3. Workflows: no push trigger on a work branch, no schedule more often than hourly. See Actions minutes.
+4. Lint: `npm run lint` when there is a `package.json`; `ruff check` when there are Python files.
+5. No lint-debt block past its deadline.
+6. .NET: the solution builds and its test projects pass.
+7. Tests: `npm test` or `pytest`, when the repo has them.
 
 **Enforced: Blocked** until it is green.
 
@@ -266,6 +267,57 @@ No repo name, project code or version number in the name.
 | `test-manual-github [Run Org Tests]` | `Test-Manual-GitHub [tests]` | the code is lowercase; the name is a verb and an object in title case |
 
 **Enforced: Convention.**
+
+## Actions minutes
+
+The org has 3,000 GitHub Actions minutes a month, shared by every repo. Each job is billed by the minute, rounded up. When the pool is empty no workflow starts in any repo: no check runs, so no pull request can merge, until the next month or until an org owner raises the budget. That happened on 2026-11-23.
+
+**Rule 1. A workflow runs on push only for `main`, `production` or `staging`.** Work branches are checked by the pull request check; a second run on every push is the fastest way to empty the pool.
+
+```yaml
+# Right
+on:
+  push:
+    branches: [main]
+
+# Wrong: every commit on every branch, from every person and every agent
+on:
+  push:
+    branches: ["**"]
+
+# Wrong: no branches named means all of them
+on: push
+```
+
+A push trigger that names only `tags` is fine.
+
+**Enforced: Checked.**
+
+**Rule 2. A schedule runs at most once an hour.** Give the cron one plain minute.
+
+| Right | Wrong | Why it is wrong |
+|---|---|---|
+| `15 * * * *` | `*/10 * * * *` | six runs an hour |
+| `0 7 * * 1` | `0,30 9-17 * * *` | two runs an hour |
+
+Work that has to run more often is not a workflow: make it a timer in an Azure Function (start from `t-template-it-azure-function`).
+
+**Enforced: Checked.** The one exception is the org's own onboarding job.
+
+**Rule 3. Do not repeat the check.** Lint and tests already run on every pull request. A repo workflow does not run them again.
+
+**Rule 4. Every job sets `timeout-minutes`.** Without it a hung job is billed for six hours.
+
+```yaml
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+```
+
+**Rule 5. Push to an open pull request in batches.** Every push to an open PR runs the check again. A push to a branch with no PR open costs nothing. Commit as often as you like; open the PR when the work is ready, and after that push finished pieces, not single lines. This goes for Claude Code sessions too.
+
+**Enforced: Convention** for rules 3 to 5.
 
 ## Tokens and keys
 
