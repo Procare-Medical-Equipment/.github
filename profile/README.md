@@ -52,7 +52,7 @@ Everything is lowercase except env var names and the plain name in brackets.
 gh repo create Procare-Medical-Equipment/pc-app-ops-staff-portal --private --source . --push
 ```
 
-Within 30 minutes an onboarding PR titled `chore: adopt org PR flow` appears. It adds the check, CODEOWNERS and the PR template. Merge it. From that moment `main` only changes through pull requests. The repo also gets a board and has Issues switched on.
+Within 30 minutes on a weekday between 9am and 5pm Mountain time (otherwise the next working morning) an onboarding PR titled `chore: adopt org PR flow` appears. It adds the check, CODEOWNERS and the PR template. Merge it. From that moment `main` only changes through pull requests. The repo also gets a board and has Issues switched on.
 
 **About the repo** lives on the repo, not in a file: the description in the About field; lifecycle, platforms and data sensitivity in Settings → Custom properties.
 
@@ -214,7 +214,7 @@ A team may add fields to its own board. The standard Status options stay. A repo
 
 **Rule 5. Backlogs, to-do files and decision decks do not live in a repo.** They are issues.
 
-**Enforced: Convention** for all five. The forms, boards and fields are created for you; issues reach the boards within 30 minutes.
+**Enforced: Convention** for all five. The forms, boards and fields are created for you; issues reach the boards within 30 minutes during working hours.
 
 ## Linting
 
